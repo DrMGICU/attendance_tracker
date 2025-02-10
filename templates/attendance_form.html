@@ -1,0 +1,44 @@
+<!-- templates/attendance_form.html -->
+{% extends "layout.html" %}
+{% block title %}Attendance - Attendance Tracker{% endblock %}
+{% block content %}
+<h2 class="mt-4">Attendance Log</h2>
+<form method="POST">
+  <div class="form-group">
+    <label for="log_date">Date</label>
+    <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
+  </div>
+  <table class="table table-bordered">
+    <thead class="thead-light">
+      <tr>
+        <th>Resident</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resident in residents %}
+      <tr>
+        <td>{{ resident }}</td>
+        <td>
+          <select class="form-control" name="{{ resident }}" required>
+            <option value="Present">Present</option>
+            <option value="Late 15-60">Late 15–60 minutes</option>
+            <option value="Late >60">Late >60 minutes</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="form-group">
+    <label for="log_type">Log Type</label>
+    <select class="form-control" id="log_type" name="log_type" required>
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly</option>
+      <option value="block">Block</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success">Submit Attendance Log</button>
+</form>
+{% endblock %}
