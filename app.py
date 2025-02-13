@@ -123,14 +123,39 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def attendance():
+    from datetime import datetime, date  # ensure these are imported if not already
     if request.method == 'POST':
+        # Get the chosen date and block from the form
         log_date = request.form.get('log_date')
         selected_block = request.form.get('block')
+        
+        # Validate the date format and convert to a date object
+        try:
+            chosen_date = datetime.strptime(log_date, "%Y-%m-%d").date()
+        except Exception as e:
+            flash("Invalid date format.", "danger")
+            return redirect(url_for('attendance'))
+        
+        # Lookup block information from the global 'blocks' list
+        block_info = next((b for b in blocks if b["name"] == selected_block), None)
+        if not block_info:
+            flash("Selected block not found.", "danger")
+            return redirect(url_for('attendance'))
+        
+        # Convert block start and end dates to date objects
+        block_start = datetime.strptime(block_info["start"], "%Y-%m-%d").date()
+        block_end = datetime.strptime(block_info["end"], "%Y-%m-%d").date()
+        
+        # Ensure the chosen date falls within the block's range
+        if not (block_start <= chosen_date <= block_end):
+            flash(f"Selected date {log_date} is not within the range for {selected_block} ({block_info['start']} to {block_info['end']}).", "danger")
+            return redirect(url_for('attendance'))
+        
+        # Connect to the database using psycopg2 and create a cursor
         conn = get_db_connection()
-        # Create a cursor with a RealDictCursor (if desired)
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         
-        # Check if any attendance records already exist for this date and block.
+        # Check if any attendance records already exist for this date and block
         cur.execute(
             "SELECT COUNT(*) as count FROM attendance_log WHERE log_date = %s AND block = %s",
             (log_date, selected_block)
@@ -142,14 +167,15 @@ def attendance():
             conn.close()
             return redirect(url_for('attendance'))
         else:
-            # Insert new records for each resident in the chosen block.
+            # No duplicate found; insert records for each resident in the selected block.
             residents_to_use = block_residents.get(selected_block, [])
             for resident in residents_to_use:
+                # Get the submitted status for each resident, defaulting to "Absent" if not provided.
                 status = request.form.get(resident, "Absent")
-                cur.execute('''
+                cur.execute("""
                     INSERT INTO attendance_log (log_date, resident_name, status, block)
                     VALUES (%s, %s, %s, %s)
-                ''', (log_date, resident, status, selected_block))
+                """, (log_date, resident, status, selected_block))
             conn.commit()
             cur.close()
             conn.close()
@@ -157,6 +183,7 @@ def attendance():
             return redirect(url_for('attendance'))
     else:
         # GET request: load the attendance form.
+        # Retrieve selected block and date from query parameters, defaulting to today's date.
         selected_block = request.args.get('block') or ""
         log_date = request.args.get('log_date') or date.today().isoformat()
         if selected_block and selected_block in block_residents:
