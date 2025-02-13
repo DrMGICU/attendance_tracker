@@ -116,29 +116,36 @@ def logout():
 @login_required
 def attendance():
     if request.method == 'POST':
-        log_date = request.form.get('log_date')
-        selected_block = request.form.get('block')
-        conn = get_db_connection()
-        # Use the block-specific resident list
-        residents_to_use = block_residents.get(selected_block, [])
-        for resident in residents_to_use:
-            status = request.form.get(resident, "Absent")
-            conn.execute('''
-                INSERT INTO attendance_log (log_date, resident_name, status, block)
-                VALUES (?, ?, ?, ?)
-            ''', (log_date, resident, status, selected_block))
-        conn.commit()
-        conn.close()
-        flash("Attendance log submitted successfully!", "success")
-        return redirect(url_for('attendance'))
+        try:
+            log_date = request.form.get('log_date')
+            selected_block = request.form.get('block')
+            conn = get_db_connection()
+            residents_to_use = block_residents.get(selected_block, [])
+            # Debug: print the values (for local testing; remove in production)
+            print("Submitting attendance for block:", selected_block)
+            print("Date:", log_date)
+            print("Residents to process:", residents_to_use)
+            for resident in residents_to_use:
+                # For each resident, get the submitted status
+                status = request.form.get(resident, "Absent")
+                conn.execute('''
+                    INSERT INTO attendance_log (log_date, resident_name, status, block)
+                    VALUES (?, ?, ?, ?)
+                ''', (log_date, resident, status, selected_block))
+            conn.commit()
+            conn.close()
+            flash("Attendance log submitted successfully!", "success")
+            return redirect(url_for('attendance'))
+        except Exception as e:
+            # Flash the error message (for debugging only)
+            flash("Error submitting attendance: " + str(e), "danger")
+            return redirect(url_for('attendance'))
     else:
-        # GET: Show the attendance form.
-        # Expecting a block to be selected first via a GET parameter.
         selected_block = request.args.get('block') or ""
         if selected_block and selected_block in block_residents:
             residents_to_show = block_residents[selected_block]
         else:
-            residents_to_show = []  # No block selected; you might display a message.
+            residents_to_show = []
         today = date.today().isoformat()
         return render_template('attendance_form.html', residents=residents_to_show, today=today, blocks=blocks, selected_block=selected_block)
 
@@ -173,28 +180,33 @@ def view_logs():
 @app.route('/edit/<int:log_id>', methods=['GET', 'POST'])
 @login_required
 def edit_log(log_id):
-    conn = get_db_connection()
-    if request.method == 'POST':
-        log_date = request.form.get('log_date')
-        resident_name = request.form.get('resident_name')
-        status = request.form.get('status')
-        block_val = request.form.get('block')
-        conn.execute('''
-            UPDATE attendance_log
-            SET log_date = ?, resident_name = ?, status = ?, block = ?
-            WHERE id = ?
-        ''', (log_date, resident_name, status, block_val, log_id))
-        conn.commit()
-        conn.close()
-        flash("Log updated successfully!", "success")
-        return redirect(url_for('view_logs'))
-    else:
-        log = conn.execute('SELECT * FROM attendance_log WHERE id = ?', (log_id,)).fetchone()
-        conn.close()
-        if not log:
-            flash("Log not found.", "danger")
+    try:
+        conn = get_db_connection()
+        if request.method == 'POST':
+            log_date = request.form.get('log_date')
+            resident_name = request.form.get('resident_name')
+            status = request.form.get('status')
+            block_val = request.form.get('block')
+            conn.execute('''
+                UPDATE attendance_log
+                SET log_date = ?, resident_name = ?, status = ?, block = ?
+                WHERE id = ?
+            ''', (log_date, resident_name, status, block_val, log_id))
+            conn.commit()
+            conn.close()
+            flash("Log updated successfully!", "success")
             return redirect(url_for('view_logs'))
-        return render_template('edit_log.html', log=log, blocks=blocks)
+        else:
+            log = conn.execute('SELECT * FROM attendance_log WHERE id = ?', (log_id,)).fetchone()
+            conn.close()
+            if not log:
+                flash("Log not found.", "danger")
+                return redirect(url_for('view_logs'))
+            return render_template('edit_log.html', log=log, blocks=blocks)
+    except Exception as e:
+        flash("Error editing log: " + str(e), "danger")
+        return redirect(url_for('view_logs'))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
