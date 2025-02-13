@@ -211,6 +211,28 @@ def edit_log(log_id):
         conn.close()
         return render_template('edit_log.html', log=log, blocks=blocks)
 
+@app.route('/edit/<int:log_id>', methods=['GET', 'POST'])
+def edit_log(log_id):
+    conn = get_db_connection()
+    if request.method == 'POST':
+        log_date = request.form.get('log_date')
+        resident_name = request.form.get('resident_name')
+        status = request.form.get('status')
+        block_val = request.form.get('block')
+        conn.execute('''
+            UPDATE attendance_log
+            SET log_date = ?, resident_name = ?, status = ?, block = ?
+            WHERE id = ?
+        ''', (log_date, resident_name, status, block_val, log_id))
+        conn.commit()
+        conn.close()
+        flash("Log updated successfully!", "success")
+        return redirect(url_for('view_logs'))
+    else:
+        log = conn.execute('SELECT * FROM attendance_log WHERE id = ?', (log_id,)).fetchone()
+        conn.close()
+        return render_template('edit_log.html', log=log, blocks=blocks)
+
 if __name__ == '__main__':
     # Get the port from environment variable or use 5000 as default
     port = int(os.environ.get("PORT", 5000))
