@@ -10,14 +10,51 @@ DATABASE = 'attendance.db'
 
 # Dictionary mapping block names to a list of residents for that block
 block_residents = {
-    "6th Block": ["Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2", "Ali Al Ramadan ICU R1", "Mohammed Al Ithan ICU R1", "Hamzah Al Wehamad ER", "Hassan Al Hamoud IM Senior", "Abdullah Al Beladi IM Senior", " Hassan Al Hassar IM Junior", "Fatimah Al Adelle GS R2", "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"]
-    "7th Block": ["Resident A (7th)", "Resident B (7th)", "Resident C (7th)"],
-    "8th Block": ["Resident X (8th)", "Resident Y (8th)", "Resident Z (8th)"],
-    "9th Block": ["R1 (9th)", "R2 (9th)"],
-    "10th Block": ["R1 (10th)", "R2 (10th)"],
-    "11th Block": ["R1 (11th)", "R2 (11th)"],
-    "12th Block": ["R1 (12th)", "R2 (12th)"],
-    "13th Block": ["R1 (13th)", "R2 (13th)"]
+    "6th Block": [
+        "Ali Al Brahim ICU R3", 
+        "Mohammed Al Mulhim ICU R2", 
+        "Abdullah Bu Hamad ICU2", 
+        "Ali Al Ramadan ICU R1", 
+        "Mohammed Al Ithan ICU R1", 
+        "Hamzah Al Wehamad ER", 
+        "Hassan Al Hamoud IM Senior", 
+        "Abdullah Al Beladi IM Senior", 
+        "Hassan Al Hassar IM Junior", 
+        "Fatimah Al Adelle GS R2", 
+        "Zahra Al Awad GS R3", 
+        "Ali Al Mohammad Saleh GS R2", 
+        "Ammar Bu Khamseen NSX R1"
+    ],
+    "7th Block": [
+        "Resident A (7th)", 
+        "Resident B (7th)", 
+        "Resident C (7th)"
+    ],
+    "8th Block": [
+        "Resident X (8th)", 
+        "Resident Y (8th)", 
+        "Resident Z (8th)"
+    ],
+    "9th Block": [
+        "R1 (9th)",
+        "R2 (9th)"
+    ],
+    "10th Block": [
+        "R1 (10th)",
+        "R2 (10th)"
+    ],
+    "11th Block": [
+        "R1 (11th)",
+        "R2 (11th)"
+    ],
+    "12th Block": [
+        "R1 (12th)",
+        "R2 (12th)"
+    ],
+    "13th Block": [
+        "R1 (13th)", 
+        "R2 (13th)"
+        ],
     }
 
 def get_db_connection():
