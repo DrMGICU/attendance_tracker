@@ -45,61 +45,32 @@ blocks = [
 ]
 
 # Dictionary mapping block names to block-specific residents for attendance
-residents = [
-    "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2",
-    "Ali Al Ramadan ICU R1", "Mohammed Al Ithan ICU R1", "Hamzah Al Wehamad ER",
-    "Hassan Al Hamoud IM Senior", "Abdullah Al Beladi IM Senior",
-    "Hassan Al Hassar IM Junior", "Fatimah Al Adelle GS R2",
-    "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"
-]
-# Dictionary mapping block names to a list of residents for that block
 block_residents = {
     "6th Block": [
-        "Ali Al Brahim ICU R3", 
-        "Mohammed Al Mulhim ICU R2", 
-        "Abdullah Bu Hamad ICU2", 
-        "Ali Al Ramadan ICU R1", 
-        "Mohammed Al Ithan ICU R1", 
-        "Hamzah Al Wehamad ER", 
-        "Hassan Al Hamoud IM Senior", 
-        "Abdullah Al Beladi IM Senior", 
-        "Hassan Al Hassar IM Junior", 
-        "Fatimah Al Adelle GS R2", 
-        "Zahra Al Awad GS R3", 
-        "Ali Al Mohammad Saleh GS R2", 
-        "Ammar Bu Khamseen NSX R1"
+        "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2"
     ],
     "7th Block": [
-        "Ali Al Brahim ICU R3", 
-        "Mohammed Al Mulhim ICU R2", 
-        "Ali Al Ramadan ICU R1"
+        "Resident A (7th)", "Resident B (7th)", "Resident C (7th)"
     ],
     "8th Block": [
-        "Mohammed Al Ithan ICU R1", 
-        "Hamzah Al Wehamad ER", 
-        "Hassan Al Hamoud IM Senior"
+        "Resident X (8th)", "Resident Y (8th)", "Resident Z (8th)"
     ],
     "9th Block": [
-        "Ali Al Brahim ICU R3",
-        "Mohammed Al Mulhim ICU R2"
+        "R1 (9th)", "R2 (9th)"
     ],
     "10th Block": [
-        "Ali Al Brahim ICU R3",
-        "Mohammed Al Mulhim ICU R2"
+        "R1 (10th)", "R2 (10th)"
     ],
     "11th Block": [
-        "Ali Al Brahim ICU R3",
-        "Mohammed Al Mulhim ICU R2"
+        "R1 (11th)", "R2 (11th)"
     ],
     "12th Block": [
-        "Ali Al Brahim ICU R3",
-        "Mohammed Al Mulhim ICU R2"
+        "R1 (12th)", "R2 (12th)"
     ],
     "13th Block": [
-        "Ali Al Brahim ICU R3",
-        "Mohammed Al Mulhim ICU R2"
-    ],
-    }
+        "R1 (13th)", "R2 (13th)"
+    ]
+}
 
 # Global residents list (used for logs filtering)
 # This is built as a union of all block residents:
@@ -141,7 +112,6 @@ def logout():
     flash("Logged out successfully.", "info")
     return redirect(url_for('login'))
 
-# --- Attendance Form ---
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def attendance():
