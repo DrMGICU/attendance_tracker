@@ -8,6 +8,14 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 DATABASE = 'attendance.db'
 
+# Global list of residents (fallback for logs filtering)
+residents = [
+    "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2",
+    "Ali Al Ramadan ICU R1", "Mohammed Al Ithan ICU R1", "Hamzah Al Wehamad ER",
+    "Hassan Al Hamoud IM Senior", "Abdullah Al Beladi IM Senior",
+    "Hassan Al Hassar IM Junior", "Fatimah Al Adelle GS R2",
+    "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"
+]
 # Dictionary mapping block names to a list of residents for that block
 block_residents = {
     "6th Block": [
@@ -26,34 +34,34 @@ block_residents = {
         "Ammar Bu Khamseen NSX R1"
     ],
     "7th Block": [
-        "Resident A (7th)", 
-        "Resident B (7th)", 
-        "Resident C (7th)"
+        "Ali Al Brahim ICU R3", 
+        "Mohammed Al Mulhim ICU R2", 
+        "Ali Al Ramadan ICU R1"
     ],
     "8th Block": [
-        "Resident X (8th)", 
-        "Resident Y (8th)", 
-        "Resident Z (8th)"
+        "Mohammed Al Ithan ICU R1", 
+        "Hamzah Al Wehamad ER", 
+        "Hassan Al Hamoud IM Senior"
     ],
     "9th Block": [
-        "R1 (9th)",
-        "R2 (9th)"
+        "Ali Al Brahim ICU R3",
+        "Mohammed Al Mulhim ICU R2"
     ],
     "10th Block": [
-        "R1 (10th)",
-        "R2 (10th)"
+        "Ali Al Brahim ICU R3",
+        "Mohammed Al Mulhim ICU R2"
     ],
     "11th Block": [
-        "R1 (11th)",
-        "R2 (11th)"
+        "Ali Al Brahim ICU R3",
+        "Mohammed Al Mulhim ICU R2"
     ],
     "12th Block": [
-        "R1 (12th)",
-        "R2 (12th)"
+        "Ali Al Brahim ICU R3",
+        "Mohammed Al Mulhim ICU R2"
     ],
     "13th Block": [
-        "R1 (13th)", 
-        "R2 (13th)"
+        "Ali Al Brahim ICU R3",
+        "Mohammed Al Mulhim ICU R2"
     ],
     }
 
