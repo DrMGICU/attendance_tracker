@@ -26,7 +26,7 @@
 <!-- Attendance submission form (shown if a block is selected) -->
 {% if residents %}
 <form method="POST">
-  <!-- Hidden inputs to preserve selected block and date -->
+  <!-- Hidden inputs to preserve selected block and chosen date -->
   <input type="hidden" name="block" value="{{ selected_block }}">
   <input type="hidden" name="log_date" value="{{ today }}">
   <table class="table table-bordered">
@@ -56,6 +56,6 @@
   <button type="submit" class="btn btn-success">Submit Attendance Log</button>
 </form>
 {% else %}
-  <p>Please select a block to load its residents.</p>
+  <p>Please select a block and date to load its residents.</p>
 {% endif %}
 {% endblock %}
