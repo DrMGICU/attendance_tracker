@@ -1,8 +1,12 @@
-<!-- templates/logs.html -->
 {% extends "layout.html" %}
 {% block title %}Logs - Attendance Tracker{% endblock %}
 {% block content %}
 <h2 class="mt-4">Attendance Logs</h2>
+
+<!-- Clear All Logs Button -->
+<form action="{{ url_for('delete_all') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete all logs? This cannot be undone.');">
+  <button type="submit" class="btn btn-danger mb-3">Clear All Logs</button>
+</form>
 
 <!-- Filter Form -->
 <form method="get" class="mb-4">
@@ -63,6 +67,6 @@
       </td>
     </tr>
     {% endfor %}
-  </tbody>  
+  </tbody>
 </table>
 {% endblock %}

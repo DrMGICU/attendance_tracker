@@ -225,6 +225,16 @@ def delete_log(log_id):
     flash("Attendance log deleted successfully!", "success")
     return redirect(url_for('view_logs'))
 
+@app.route('/delete_all', methods=['POST'])
+@login_required
+def delete_all():
+    conn = get_db_connection()
+    conn.execute("DELETE FROM attendance_log")
+    conn.commit()
+    conn.close()
+    flash("All attendance logs have been cleared.", "success")
+    return redirect(url_for('view_logs'))
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
