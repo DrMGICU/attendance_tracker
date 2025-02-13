@@ -112,7 +112,6 @@ PASSWORD = 'password123'  # Change this for production
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Render the login page and validate credentials."""
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -123,6 +122,7 @@ def login():
         else:
             flash("Invalid credentials. Please try again.", "danger")
     return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():
