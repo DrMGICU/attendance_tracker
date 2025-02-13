@@ -126,55 +126,37 @@ def attendance():
     if request.method == 'POST':
         log_date = request.form.get('log_date')
         selected_block = request.form.get('block')
-        
-        # Validate that the chosen date is within the selected block's range.
-        from datetime import datetime
-        try:
-            chosen_date = datetime.strptime(log_date, "%Y-%m-%d").date()
-        except Exception as e:
-            flash("Invalid date format.", "danger")
-            return redirect(url_for('attendance'))
-
-        # Find the block info from the blocks list
-        block_info = next((b for b in blocks if b["name"] == selected_block), None)
-        if not block_info:
-            flash("Selected block not found.", "danger")
-            return redirect(url_for('attendance'))
-            
-        block_start = datetime.strptime(block_info["start"], "%Y-%m-%d").date()
-        block_end = datetime.strptime(block_info["end"], "%Y-%m-%d").date()
-
-        # Check if chosen_date is within the block's date range.
-        if not (block_start <= chosen_date <= block_end):
-            flash(f"The selected date {log_date} is not within the range for {selected_block} ({block_info['start']} to {block_info['end']}).", "danger")
-            return redirect(url_for('attendance'))
-
         conn = get_db_connection()
-        # Check if any records exist for this date and block
-        cur = conn.execute(
-            "SELECT COUNT(*) as count FROM attendance_log WHERE log_date = ? AND block = ?",
+        # Create a cursor with a RealDictCursor (if desired)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        
+        # Check if any attendance records already exist for this date and block.
+        cur.execute(
+            "SELECT COUNT(*) as count FROM attendance_log WHERE log_date = %s AND block = %s",
             (log_date, selected_block)
         )
         row = cur.fetchone()
         if row and row['count'] > 0:
             flash("Attendance for this date and block already exists. Please use the edit function to modify it.", "warning")
+            cur.close()
             conn.close()
             return redirect(url_for('attendance'))
         else:
-            # Insert new records for each resident in the chosen block
+            # Insert new records for each resident in the chosen block.
             residents_to_use = block_residents.get(selected_block, [])
             for resident in residents_to_use:
                 status = request.form.get(resident, "Absent")
-                conn.execute('''
+                cur.execute('''
                     INSERT INTO attendance_log (log_date, resident_name, status, block)
-                    VALUES (?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s)
                 ''', (log_date, resident, status, selected_block))
             conn.commit()
+            cur.close()
             conn.close()
             flash("Attendance log submitted successfully!", "success")
             return redirect(url_for('attendance'))
     else:
-        # GET branch: load the attendance form.
+        # GET request: load the attendance form.
         selected_block = request.args.get('block') or ""
         log_date = request.args.get('log_date') or date.today().isoformat()
         if selected_block and selected_block in block_residents:
