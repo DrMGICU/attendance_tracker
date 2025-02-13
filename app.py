@@ -65,6 +65,11 @@ block_residents = {
     ],
     }
 
+# Build a list of all unique residents for filtering
+all_residents = set()
+for resident_list in block_residents.values():
+    all_residents.update(resident_list)
+residents = list(all_residents)  # now you have a global 'residents' list
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
