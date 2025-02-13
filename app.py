@@ -1,4 +1,3 @@
-import os
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, flash
 from datetime import date
@@ -14,29 +13,20 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# (Include init_db(), blocks, residents definitions here.)
-
-@app.route('/', methods=['GET', 'POST'])
-def attendance():
-    if request.method == 'POST':
-        log_date = request.form.get('log_date')
-        selected_block = request.form.get('block')
-        conn = get_db_connection()
-        # Loop over residents and save each record
-        for resident in residents:
-            status = request.form.get(resident, "Absent")
-            conn.execute('''
-                INSERT INTO attendance_log (log_date, resident_name, status, block)
-                VALUES (?, ?, ?, ?)
-            ''', (log_date, resident, status, selected_block))
-        conn.commit()
-        conn.close()
-        flash("Attendance log submitted successfully!", "success")
-        return redirect(url_for('attendance'))
-    
-    today = date.today().isoformat()
-    return render_template('attendance_form.html', residents=residents, today=today, blocks=blocks)
-
+def init_db():
+    """Create the attendance_log table if it doesn't exist."""
+    conn = get_db_connection()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS attendance_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            log_date TEXT,
+            resident_name TEXT,
+            status TEXT,
+            block TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 # Define blocks as a list of dictionaries
 blocks = [
     {"name": "6th Block", "start": "2025-02-16", "end": "2025-03-15"},
@@ -80,27 +70,24 @@ def logout():
 # --- Attendance Form ---
 @app.route('/', methods=['GET', 'POST'])
 def attendance():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-
     if request.method == 'POST':
-        # Get form data
         log_date = request.form.get('log_date')
-        log_type = request.form.get('log_type')
+        selected_block = request.form.get('block')
         conn = get_db_connection()
-        # Loop through residents and save each record
+        # Loop over residents and save each record
         for resident in residents:
-            status = request.form.get(resident)
-            if not status:
-                status = "Absent"  # Default if none selected
+            status = request.form.get(resident, "Absent")
             conn.execute('''
-                INSERT INTO attendance_log (log_date, resident_name, status, log_type)
+                INSERT INTO attendance_log (log_date, resident_name, status, block)
                 VALUES (?, ?, ?, ?)
-            ''', (log_date, resident, status, log_type))
+            ''', (log_date, resident, status, selected_block))
         conn.commit()
         conn.close()
         flash("Attendance log submitted successfully!", "success")
         return redirect(url_for('attendance'))
+    
+    today = date.today().isoformat()
+    return render_template('attendance_form.html', residents=residents, today=today, blocks=blocks)
 
     # Set the default date to today's date.
     today = date.today().isoformat()
@@ -144,7 +131,6 @@ def view_logs():
     # For the filtering form we need a list of resident names and block names
     block_names = [b["name"] for b in blocks]
     return render_template('logs.html', logs=logs, residents=residents, blocks=block_names)
-
 
 if __name__ == '__main__':
     # Get the port from environment variable or use 5000 as default
