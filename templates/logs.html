@@ -45,6 +45,7 @@
       <th>Block</th>
       <th>Resident</th>
       <th>Status</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -54,6 +55,7 @@
       <td>{{ log['block'] }}</td>
       <td>{{ log['resident_name'] }}</td>
       <td>{{ log['status'] }}</td>
+      <td><a href="{{ url_for('edit_log', log_id=log['id']) }}">Edit</a></td>
     </tr>
     {% endfor %}
   </tbody>
