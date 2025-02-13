@@ -3,22 +3,57 @@
 {% block title %}Logs - Attendance Tracker{% endblock %}
 {% block content %}
 <h2 class="mt-4">Attendance Logs</h2>
+
+<!-- Filter Form -->
+<form method="get" class="mb-4">
+  <div class="row g-3">
+    <div class="col-md-3">
+      <label for="resident" class="form-label">Resident Name:</label>
+      <select id="resident" name="resident" class="form-select">
+        <option value="">--All--</option>
+        {% for r in residents %}
+        <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="block" class="form-label">Block:</label>
+      <select id="block" name="block" class="form-select">
+        <option value="">--All--</option>
+        {% for b in blocks %}
+        <option value="{{ b }}">{{ b }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="start_date" class="form-label">Start Date:</label>
+      <input type="date" id="start_date" name="start_date" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label for="end_date" class="form-label">End Date:</label>
+      <input type="date" id="end_date" name="end_date" class="form-control">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Filter</button>
+</form>
+
+<!-- Logs Table -->
 <table class="table table-striped">
   <thead>
     <tr>
       <th>Date</th>
+      <th>Block</th>
       <th>Resident</th>
       <th>Status</th>
-      <th>Log Type</th>
     </tr>
   </thead>
   <tbody>
     {% for log in logs %}
     <tr>
       <td>{{ log['log_date'] }}</td>
+      <td>{{ log['block'] }}</td>
       <td>{{ log['resident_name'] }}</td>
       <td>{{ log['status'] }}</td>
-      <td>{{ log['log_type'] }}</td>
     </tr>
     {% endfor %}
   </tbody>

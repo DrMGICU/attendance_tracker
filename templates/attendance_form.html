@@ -4,10 +4,22 @@
 {% block content %}
 <h2 class="mt-4">Attendance Log</h2>
 <form method="POST">
-  <div class="form-group">
-    <label for="log_date">Date</label>
+  <div class="mb-3">
+    <label for="log_date" class="form-label">Date</label>
     <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
   </div>
+  
+  <div class="mb-3">
+    <label for="block" class="form-label">Select Block</label>
+    <select class="form-select" id="block" name="block" required>
+      {% for b in blocks %}
+      <option value="{{ b.name }}">
+        {{ b.name }} ({{ b.start }} - {{ b.end }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  
   <table class="table table-bordered">
     <thead class="thead-light">
       <tr>
@@ -20,7 +32,8 @@
       <tr>
         <td>{{ resident }}</td>
         <td>
-          <select class="form-control" name="{{ resident }}" required>
+          <select class="form-select" name="{{ resident }}" required>
+            <option value="Off Duty">Off Duty</option>
             <option value="Present">Present</option>
             <option value="Late 15-60">Late 15–60 minutes</option>
             <option value="Late >60">Late >60 minutes</option>
@@ -31,14 +44,6 @@
       {% endfor %}
     </tbody>
   </table>
-  <div class="form-group">
-    <label for="log_type">Log Type</label>
-    <select class="form-control" id="log_type" name="log_type" required>
-      <option value="daily">Daily</option>
-      <option value="weekly">Weekly</option>
-      <option value="block">Block</option>
-    </select>
-  </div>
   <button type="submit" class="btn btn-success">Submit Attendance Log</button>
 </form>
 {% endblock %}
