@@ -237,56 +237,60 @@ def view_logs():
 @app.route('/edit/<int:log_id>', methods=['GET', 'POST'])
 @login_required
 def edit_log(log_id):
-    try:
-        conn = get_db_connection()
-        if request.method == 'POST':
-            log_date = request.form.get('log_date')
-            resident_name = request.form.get('resident_name')
-            status = request.form.get('status')
-            block_val = request.form.get('block')
-            conn.execute('''
-                UPDATE attendance_log
-                SET log_date = ?, resident_name = ?, status = ?, block = ?
-                WHERE id = ?
-            ''', (log_date, resident_name, status, block_val, log_id))
-            conn.commit()
-            conn.close()
-            flash("Log updated successfully!", "success")
-            return redirect(url_for('view_logs'))
-        else:
-            log = conn.execute('SELECT * FROM attendance_log WHERE id = ?', (log_id,)).fetchone()
-            conn.close()
-            if not log:
-                flash("Log not found.", "danger")
-                return redirect(url_for('view_logs'))
-            return render_template('edit_log.html', log=log, blocks=blocks)
-    except Exception as e:
-        flash("Error editing log: " + str(e), "danger")
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    if request.method == 'POST':
+        log_date = request.form.get('log_date')
+        resident_name = request.form.get('resident_name')
+        status = request.form.get('status')
+        block_val = request.form.get('block')
+        cur.execute('''
+            UPDATE attendance_log
+            SET log_date = %s, resident_name = %s, status = %s, block = %s
+            WHERE id = %s
+        ''', (log_date, resident_name, status, block_val, log_id))
+        conn.commit()
+        cur.close()
+        conn.close()
+        flash("Log updated successfully!", "success")
         return redirect(url_for('view_logs'))
+    else:
+        cur.execute('SELECT * FROM attendance_log WHERE id = %s', (log_id,))
+        log = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not log:
+            flash("Log not found.", "danger")
+            return redirect(url_for('view_logs'))
+        return render_template('edit_log.html', log=log, blocks=blocks)
+
 
 @app.route('/delete/<int:log_id>', methods=['POST'])
 @login_required
 def delete_log(log_id):
     conn = get_db_connection()
-    conn.execute("DELETE FROM attendance_log WHERE id = ?", (log_id,))
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute("DELETE FROM attendance_log WHERE id = %s", (log_id,))
     conn.commit()
+    cur.close()
     conn.close()
     flash("Attendance log deleted successfully!", "success")
     return redirect(url_for('view_logs'))
 
+
 @app.route('/delete_all', methods=['POST'])
 @login_required
 def delete_all():
-    # Get the password entered by the user
     entered_password = request.form.get('admin_password')
-    # Verify it against the admin password
     if entered_password != ADMIN_PASSWORD:
         flash("Incorrect admin password. Logs were not deleted.", "danger")
         return redirect(url_for('view_logs'))
     
     conn = get_db_connection()
-    conn.execute("DELETE FROM attendance_log")
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute("DELETE FROM attendance_log")
     conn.commit()
+    cur.close()
     conn.close()
     flash("All attendance logs have been cleared.", "success")
     return redirect(url_for('view_logs'))
