@@ -121,40 +121,39 @@ def attendance():
         log_date = request.form.get('log_date')
         selected_block = request.form.get('block')
         conn = get_db_connection()
-        residents_to_use = block_residents.get(selected_block, [])
-        for resident in residents_to_use:
-            status = request.form.get(resident, "Absent")
-            # Check if an entry already exists for this resident on this date and block.
-            cur = conn.execute(
-                "SELECT id FROM attendance_log WHERE log_date = ? AND resident_name = ? AND block = ?",
-                (log_date, resident, selected_block)
-            )
-            row = cur.fetchone()
-            if row:
-                # Record exists, so update it.
-                conn.execute(
-                    "UPDATE attendance_log SET status = ? WHERE id = ?",
-                    (status, row['id'])
-                )
-            else:
-                # No record exists, insert a new one.
-                conn.execute(
-                    "INSERT INTO attendance_log (log_date, resident_name, status, block) VALUES (?, ?, ?, ?)",
-                    (log_date, resident, status, selected_block)
-                )
-        conn.commit()
-        conn.close()
-        flash("Attendance log submitted successfully!", "success")
-        return redirect(url_for('attendance'))
+        # Check if any attendance records already exist for this date and block
+        cur = conn.execute(
+            "SELECT COUNT(*) as count FROM attendance_log WHERE log_date = ? AND block = ?",
+            (log_date, selected_block)
+        )
+        row = cur.fetchone()
+        if row and row['count'] > 0:
+            # Attendance for this date and block already exists
+            flash("Attendance for this date and block already exists. Please use the edit functionality to modify it.", "warning")
+            conn.close()
+            return redirect(url_for('attendance'))
+        else:
+            # No records exist yet, so insert new records for each resident
+            residents_to_use = block_residents.get(selected_block, [])
+            for resident in residents_to_use:
+                status = request.form.get(resident, "Absent")
+                conn.execute('''
+                    INSERT INTO attendance_log (log_date, resident_name, status, block)
+                    VALUES (?, ?, ?, ?)
+                ''', (log_date, resident, status, selected_block))
+            conn.commit()
+            conn.close()
+            flash("Attendance log submitted successfully!", "success")
+            return redirect(url_for('attendance'))
     else:
+        # GET request: Show the attendance form.
         selected_block = request.args.get('block') or ""
         if selected_block and selected_block in block_residents:
             residents_to_show = block_residents[selected_block]
         else:
-            residents_to_show = []  # Or display a message if no block is selected
+            residents_to_show = []
         today = date.today().isoformat()
         return render_template('attendance_form.html', residents=residents_to_show, today=today, blocks=blocks, selected_block=selected_block)
-
 
 @app.route('/logs')
 @login_required
