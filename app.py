@@ -61,7 +61,7 @@ block_residents = {
         "Ali", "Danny", "Dalal"
     ],
     "8th Block": [
-        "Resident X (8th)", "Resident Y (8th)", "Resident Z (8th)"
+        "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2", "Ali Al Ramadan ICU R1"
     ],
     "9th Block": [
         "R1 (9th)", "R2 (9th)"
