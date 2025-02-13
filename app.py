@@ -18,6 +18,7 @@ def get_db_connection():
     return conn
 
 def init_db():
+    """Create the attendance_log table if it doesn't exist."""
     conn = get_db_connection()
     conn.execute('''
         CREATE TABLE IF NOT EXISTS attendance_log (
@@ -30,6 +31,7 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
+
 
 
 
@@ -54,7 +56,7 @@ block_residents = {
          "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2", "Ali Al Ramadan ICU R1", "Mohammed Al Ithan ICU R1", "Hamzah Al Wehamad ER", "Hassan Al Hamoud IM Senior", "Abdullah Al Beladi IM Senior", "Hassan Al Hassar IM Junior", "Fatimah Al Adelle GS R2", "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"
     ],
     "7th Block": [
-        "Resident A (7th)", "Resident B (7th)", "Resident C (7th)"
+        "Ali", "Danny", "Dalal"
     ],
     "8th Block": [
         "Resident X (8th)", "Resident Y (8th)", "Resident Z (8th)"
