@@ -122,21 +122,42 @@ def attendance():
     if request.method == 'POST':
         log_date = request.form.get('log_date')
         selected_block = request.form.get('block')
-        conn = get_db_connection()
+        
+        # Validate that the chosen date is within the selected block's range.
+        from datetime import datetime
+        try:
+            chosen_date = datetime.strptime(log_date, "%Y-%m-%d").date()
+        except Exception as e:
+            flash("Invalid date format.", "danger")
+            return redirect(url_for('attendance'))
 
-        # Check if any attendance records already exist for this date and block.
+        # Find the block info from the blocks list
+        block_info = next((b for b in blocks if b["name"] == selected_block), None)
+        if not block_info:
+            flash("Selected block not found.", "danger")
+            return redirect(url_for('attendance'))
+            
+        block_start = datetime.strptime(block_info["start"], "%Y-%m-%d").date()
+        block_end = datetime.strptime(block_info["end"], "%Y-%m-%d").date()
+
+        # Check if chosen_date is within the block's date range.
+        if not (block_start <= chosen_date <= block_end):
+            flash(f"The selected date {log_date} is not within the range for {selected_block} ({block_info['start']} to {block_info['end']}).", "danger")
+            return redirect(url_for('attendance'))
+
+        conn = get_db_connection()
+        # Check if any records exist for this date and block
         cur = conn.execute(
             "SELECT COUNT(*) as count FROM attendance_log WHERE log_date = ? AND block = ?",
             (log_date, selected_block)
         )
         row = cur.fetchone()
         if row and row['count'] > 0:
-            # If records exist, block new submission and ask to use edit.
             flash("Attendance for this date and block already exists. Please use the edit function to modify it.", "warning")
             conn.close()
             return redirect(url_for('attendance'))
         else:
-            # Otherwise, insert new records.
+            # Insert new records for each resident in the chosen block
             residents_to_use = block_residents.get(selected_block, [])
             for resident in residents_to_use:
                 status = request.form.get(resident, "Absent")
@@ -149,8 +170,7 @@ def attendance():
             flash("Attendance log submitted successfully!", "success")
             return redirect(url_for('attendance'))
     else:
-        # GET request: allow the user to choose a block and date.
-        # If no date is provided, default to today's date.
+        # GET branch: load the attendance form.
         selected_block = request.args.get('block') or ""
         log_date = request.args.get('log_date') or date.today().isoformat()
         if selected_block and selected_block in block_residents:
@@ -158,6 +178,7 @@ def attendance():
         else:
             residents_to_show = []
         return render_template('attendance_form.html', residents=residents_to_show, today=log_date, blocks=blocks, selected_block=selected_block)
+
 
 @app.route('/logs')
 @login_required
