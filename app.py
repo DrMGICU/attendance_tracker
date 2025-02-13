@@ -170,29 +170,42 @@ def attendance():
 @login_required
 def view_logs():
     conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
     query = "SELECT * FROM attendance_log WHERE 1=1"
     params = []
+    
     resident_filter = request.args.get('resident')
     if resident_filter:
-        query += " AND resident_name = ?"
+        query += " AND resident_name = %s"
         params.append(resident_filter)
+    
     block_filter = request.args.get('block')
     if block_filter:
-        query += " AND block = ?"
+        query += " AND block = %s"
         params.append(block_filter)
+    
     start_date = request.args.get('start_date')
     if start_date:
-        query += " AND log_date >= ?"
+        query += " AND log_date >= %s"
         params.append(start_date)
+    
     end_date = request.args.get('end_date')
     if end_date:
-        query += " AND log_date <= ?"
+        query += " AND log_date <= %s"
         params.append(end_date)
+    
     query += " ORDER BY log_date DESC, resident_name"
-    logs = conn.execute(query, params).fetchall()
+    
+    cur.execute(query, params)
+    logs = cur.fetchall()
+    
+    cur.close()
     conn.close()
+    
     block_names = [b["name"] for b in blocks]
     return render_template('logs.html', logs=logs, residents=residents, blocks=block_names)
+
 
 @app.route('/edit/<int:log_id>', methods=['GET', 'POST'])
 @login_required
