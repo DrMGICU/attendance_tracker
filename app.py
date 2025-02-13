@@ -3,18 +3,21 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from datetime import date
 import sqlite3
 import os
+import psycopg2
+import psycopg2.extras
 from functools import wraps
 
 ADMIN_PASSWORD = 'delete123'
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-DATABASE = 'attendance_new.db'
+DATABASE = 'attendance.db'
 
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
+    # DATABASE_URL is automatically set by the Heroku Postgres add-on.
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     return conn
 
 def init_db():
@@ -31,8 +34,6 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
-
-
 
 
 # Initialize the database at startup
