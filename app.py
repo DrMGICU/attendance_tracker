@@ -7,7 +7,8 @@ from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-DATABASE = 'attendance.db'
+DATABASE = 'attendance_new.db'
+
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -15,11 +16,9 @@ def get_db_connection():
     return conn
 
 def init_db():
-    """Force-drop and recreate the attendance_log table with the updated schema."""
     conn = get_db_connection()
-    conn.execute("DROP TABLE IF EXISTS attendance_log")
     conn.execute('''
-        CREATE TABLE attendance_log (
+        CREATE TABLE IF NOT EXISTS attendance_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             log_date TEXT,
             resident_name TEXT,
@@ -29,6 +28,7 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
+
 
 
 # Initialize the database at startup
