@@ -1,0 +1,37 @@
+<!-- templates/edit_log.html -->
+{% extends "layout.html" %}
+{% block title %}Edit Attendance Log{% endblock %}
+{% block content %}
+<h2>Edit Attendance Log</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="log_date" class="form-label">Date</label>
+    <input type="date" class="form-control" id="log_date" name="log_date" value="{{ log['log_date'] }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="resident_name" class="form-label">Resident Name</label>
+    <input type="text" class="form-control" id="resident_name" name="resident_name" value="{{ log['resident_name'] }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status">
+      <option value="Off Duty" {% if log['status'] == "Off Duty" %}selected{% endif %}>Off Duty</option>
+      <option value="Present" {% if log['status'] == "Present" %}selected{% endif %}>Present</option>
+      <option value="Late 15-60" {% if log['status'] == "Late 15-60" %}selected{% endif %}>Late 15–60 minutes</option>
+      <option value="Late >60" {% if log['status'] == "Late >60" %}selected{% endif %}>Late >60 minutes</option>
+      <option value="Absent" {% if log['status'] == "Absent" %}selected{% endif %}>Absent</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="block" class="form-label">Block</label>
+    <select class="form-select" id="block" name="block">
+      {% for b in blocks %}
+      <option value="{{ b.name }}" {% if log['block'] == b.name %}selected{% endif %}>
+        {{ b.name }} ({{ b.start }} - {{ b.end }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-success">Update Log</button>
+</form>
+{% endblock %}

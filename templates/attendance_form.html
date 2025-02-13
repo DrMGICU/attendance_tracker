@@ -3,23 +3,31 @@
 {% block title %}Attendance - Attendance Tracker{% endblock %}
 {% block content %}
 <h2 class="mt-4">Attendance Log</h2>
-<form method="POST">
-  <div class="mb-3">
-    <label for="log_date" class="form-label">Date</label>
-    <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
-  </div>
-  
+
+<!-- Block and Date Selection Form -->
+<form method="GET" class="mb-4">
   <div class="mb-3">
     <label for="block" class="form-label">Select Block</label>
     <select class="form-select" id="block" name="block" required>
       {% for b in blocks %}
-      <option value="{{ b.name }}">
+      <option value="{{ b.name }}" {% if selected_block == b.name %}selected{% endif %}>
         {{ b.name }} ({{ b.start }} - {{ b.end }})
       </option>
       {% endfor %}
     </select>
   </div>
-  
+  <div class="mb-3">
+    <label for="log_date" class="form-label">Date</label>
+    <input type="date" class="form-control" id="log_date" name="log_date" value="{{ today }}" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Load Residents</button>
+</form>
+
+<!-- Attendance Entry Form (POST) -->
+{% if residents %}
+<form method="POST">
+  <input type="hidden" name="block" value="{{ selected_block }}">
+  <input type="hidden" name="log_date" value="{{ today }}">
   <table class="table table-bordered">
     <thead class="thead-light">
       <tr>
@@ -46,4 +54,8 @@
   </table>
   <button type="submit" class="btn btn-success">Submit Attendance Log</button>
 </form>
+{% else %}
+  <p>Please select a block to load the corresponding residents.</p>
+{% endif %}
+
 {% endblock %}
