@@ -21,11 +21,11 @@ def get_db_connection():
     return conn
 
 def init_db():
-    """Create the attendance_log table if it doesn't exist."""
     conn = get_db_connection()
-    conn.execute('''
+    cur = conn.cursor()  # Create a cursor
+    cur.execute('''
         CREATE TABLE IF NOT EXISTS attendance_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             log_date TEXT,
             resident_name TEXT,
             status TEXT,
@@ -33,7 +33,8 @@ def init_db():
         )
     ''')
     conn.commit()
-    conn.close()
+    cur.close()  # Close the cursor
+    conn.close()  # Close the connection
 
 
 # Initialize the database at startup
