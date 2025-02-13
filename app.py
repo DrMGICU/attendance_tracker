@@ -213,6 +213,16 @@ def edit_log(log_id):
         flash("Error editing log: " + str(e), "danger")
         return redirect(url_for('view_logs'))
 
+@app.route('/delete/<int:log_id>', methods=['POST'])
+@login_required
+def delete_log(log_id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM attendance_log WHERE id = ?", (log_id,))
+    conn.commit()
+    conn.close()
+    flash("Attendance log deleted successfully!", "success")
+    return redirect(url_for('view_logs'))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

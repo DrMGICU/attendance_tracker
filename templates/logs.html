@@ -61,3 +61,20 @@
   </tbody>
 </table>
 {% endblock %}
+
+<tbody>
+  {% for log in logs %}
+  <tr>
+    <td>{{ log['log_date'] }}</td>
+    <td>{{ log['block'] }}</td>
+    <td>{{ log['resident_name'] }}</td>
+    <td>{{ log['status'] }}</td>
+    <td>
+      <a href="{{ url_for('edit_log', log_id=log['id']) }}" class="btn btn-primary btn-sm">Edit</a>
+      <form action="{{ url_for('delete_log', log_id=log['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this log?');">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
