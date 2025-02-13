@@ -3,11 +3,16 @@
 {% block content %}
 <h2 class="mt-4">Attendance Logs</h2>
 
-<!-- Clear All Logs Button -->
+<!-- Clear All Logs Button with Admin Password -->
 <form action="{{ url_for('delete_all') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete all logs? This cannot be undone.');">
+  <div class="mb-3">
+    <label for="admin_password" class="form-label">Admin Password:</label>
+    <input type="password" class="form-control" id="admin_password" name="admin_password" placeholder="Enter admin password" required>
+  </div>
   <button type="submit" class="btn btn-danger mb-3">Clear All Logs</button>
 </form>
 
+<!-- The rest of your logs.html content (filter form and logs table) -->
 <!-- Filter Form -->
 <form method="get" class="mb-4">
   <div class="row g-3">

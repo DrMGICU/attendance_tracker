@@ -5,6 +5,8 @@ import sqlite3
 import os
 from functools import wraps
 
+ADMIN_PASSWORD = 'delete123'
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 DATABASE = 'attendance_new.db'
@@ -228,6 +230,13 @@ def delete_log(log_id):
 @app.route('/delete_all', methods=['POST'])
 @login_required
 def delete_all():
+    # Get the password entered by the user
+    entered_password = request.form.get('admin_password')
+    # Verify it against the admin password
+    if entered_password != ADMIN_PASSWORD:
+        flash("Incorrect admin password. Logs were not deleted.", "danger")
+        return redirect(url_for('view_logs'))
+    
     conn = get_db_connection()
     conn.execute("DELETE FROM attendance_log")
     conn.commit()
