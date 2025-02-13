@@ -9,7 +9,7 @@ ADMIN_PASSWORD = 'delete123'
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-DATABASE = 'attendance_new.db'
+DATABASE = 'attendance.db'
 
 
 def get_db_connection():
