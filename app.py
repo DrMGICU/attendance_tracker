@@ -54,7 +54,7 @@ block_residents = {
     "13th Block": [
         "R1 (13th)", 
         "R2 (13th)"
-        ],
+    ],
     }
 
 def get_db_connection():
