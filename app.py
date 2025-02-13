@@ -17,10 +17,11 @@ def get_db_connection():
     return conn
 
 def init_db():
-    """Create the attendance_log table if it doesn't exist."""
+    """Force-drop and recreate the attendance_log table with the updated schema."""
     conn = get_db_connection()
+    conn.execute("DROP TABLE IF EXISTS attendance_log")
     conn.execute('''
-        CREATE TABLE IF NOT EXISTS attendance_log (
+        CREATE TABLE attendance_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             log_date TEXT,
             resident_name TEXT,
