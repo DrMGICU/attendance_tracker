@@ -58,7 +58,7 @@ block_residents = {
          "Hussain Nouh ICU R5","Dalal ICU R4","Mubarak ICU R4","Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Mohammed Al Hejji ICU R2","Abdullah Bu Hamad ICU2", "Ali Al Ramadan ICU R1", "Mohammed Al Ithan ICU R1", "Hamzah Al Wehamad ER", "Hassan Al Hamoud IM Senior", "Abdullah Al Beladi IM Senior", "Hassan Al Hassar IM Junior", "Fatimah Al Adelle GS R2", "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"
     ],
     "7th Block": [
-        "Ali", "Danny", "Dalal"
+        "Hussain Nouh ICU R5","Muntazar ICU R5", "Dalal ICU R4","Mubarak ICU R4","Fatimah Al Naim ICU R4", "Mokhtar Al Ghanim ICU R2", "Mohammed Al Hejji ICU R2","Abdullah Bu Hamad ICU2", "Mohammed Al Abdullah ICU R1", "Alaa Al Rashid IM Junior", "UmAlbaneen IM Junior", "Fatimah Al Adelle GS R2", "Zahra Al Awad GS R3", "Ali Al Mohammad Saleh GS R2", "Ammar Bu Khamseen NSX R1"
     ],
     "8th Block": [
         "Ali Al Brahim ICU R3", "Mohammed Al Mulhim ICU R2", "Abdullah Bu Hamad ICU2", "Ali Al Ramadan ICU R1"
